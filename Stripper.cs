@@ -10,7 +10,7 @@ namespace Stripper {
 
     public class Main : BasePlugin, IPluginConfig<MainConfig> {
         
-        public override string ModuleName => "eboyfriends";
+        public override string ModuleName => "Stripper";
         public override string ModuleVersion => "6.6.6";
         public override string ModuleAuthor => "eboyfriends";
         public required MainConfig Config { get; set; }
