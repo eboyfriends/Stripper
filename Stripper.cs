@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory;
+using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace Stripper {
@@ -51,6 +52,8 @@ namespace Stripper {
             if (players.Count <= 0) return HookResult.Continue;
 
             foreach (CCSPlayerController player in players) {
+                if (player.Team == CsTeam.Spectator || player.Team == CsTeam.None) continue;
+
                 if (!HasItem(player, "weapon_awp")) {
                     player.GiveNamedItem("weapon_awp");
                 }
