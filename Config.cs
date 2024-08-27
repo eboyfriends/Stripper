@@ -11,6 +11,8 @@ namespace Stripper {
             "flashbang",
             "decoy"
         };
+
+        public bool RestoreHpOnKnife = true;
     }
 }
 

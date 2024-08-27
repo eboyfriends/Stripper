@@ -22,6 +22,7 @@ namespace Stripper {
             RegisterEventHandler<EventItemPickup>(OnItemPickup, HookMode.Post);
             RegisterEventHandler<EventItemPurchase>(OnItemPurchase, HookMode.Post);
             RegisterEventHandler<EventRoundStart>(OnRoundStart, HookMode.Post);
+            RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath, HookMode.Post);
 
             RegisterListener<Listeners.OnEntitySpawned>(OnEntitySpawned);
         }
@@ -33,6 +34,7 @@ namespace Stripper {
             DeregisterEventHandler<EventItemPickup>(OnItemPickup, HookMode.Post);
             DeregisterEventHandler<EventItemPurchase>(OnItemPurchase, HookMode.Post);
             DeregisterEventHandler<EventRoundStart>(OnRoundStart, HookMode.Post);
+            DeregisterEventHandler<EventPlayerDeath>(OnPlayerDeath, HookMode.Post);
         }
 
         public void OnConfigParsed(MainConfig config) {
@@ -94,6 +96,27 @@ namespace Stripper {
             
             if (!Config.Allowed.Any(allowedItem => Weapon.WeaponName.Contains(allowedItem, StringComparison.OrdinalIgnoreCase))) {
                 return HookResult.Handled;
+            }
+
+            return HookResult.Continue;
+        }
+        
+        private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info) {
+            if (@event.Attacker == null || @event.Userid == null) {
+                return HookResult.Continue;
+            }
+
+            CCSPlayerController Player = @event.Userid;
+            CCSPlayerController Attacker = @event.Attacker;
+            
+            CCSPlayerPawn? PlayerPawn = Player.PlayerPawn.Value;
+            CCSPlayerPawn? AttackerPawn = Attacker.PlayerPawn.Value;
+
+            if (Config != null && Config.RestoreHpOnKnife && @event.Weapon.ToLower().StartsWith("knife") && AttackerPawn != null) {
+                AttackerPawn.Health = 100;
+                AttackerPawn.MaxHealth = 100;
+                
+                Utilities.SetStateChanged(AttackerPawn, "CBaseEntity", "m_iHealth");
             }
 
             return HookResult.Continue;
